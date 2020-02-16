@@ -1,0 +1,66 @@
+{% extends "layout.html" %}
+
+{%block head%}
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+{% endblock %}
+
+<!---
+<form name="title_form">
+    <h1>Hello, {{name}}</h1>
+    <input type="submit" value="Register">
+    <input type="submit" value="login">
+</form>
+<script type ="text/javascript">  
+    $(document).ready(function() {
+
+    var socket = io.connect('http://127.0.0.1:5000');
+
+    socket.on('connect', function() {
+        socket.send('User has connected!');
+    });
+
+    socket.on('message', function(msg) {
+        $("#message").append('<li>'+msg+'</li>');
+        console.log('Received message');
+    });
+
+    $('#sendbtn').on('click', function() {
+        socket.send($('#myText').val());
+        $('#myText').val('');
+    });
+    }); 
+</script>
+<form>
+    <input type="text" id="myText">
+    <input type="button" id="sendbtn" value="Send">
+</form>
+<ul id="message"></ul>
+
+-->
+    {% block content %}
+        {% for post in posts.items %}
+        <article class="media content-section">
+          <img class="rounded-circle article-img"src="{{ url_for('static',filename='profile_pics/'+post.author.image_file) }}">
+          <div class="media-body">
+            <div class="article-metadata">
+              <a class="mr-2" href="{{url_for('posts.user_posts',username=post.author.username)}}">{{ post.author.username }}</a>
+              <small class="text-muted">{{ post.date_posted.strftime('%Y-%m-%d') }}</small>
+            </div>
+            <h2><a class="article-title" href="{{url_for('posts.post',post_id=post.id)}}">{{ post.title }}</a></h2>
+            <p class="article-content">{{ post.content }}</p>
+          </div>
+        </article>
+        {% endfor %}
+        {% for page_num in posts.iter_pages(left_edge=1,right_edge=1, left_current=1, right_current=2 )%}
+            {% if page_num %}
+                {% if posts.page == page_num %}
+                <a class="btn btn-info mb-4" href="{{ url_for('main.index',page=page_num) }}">{{ page_num }}</a>
+                {% else %}
+                <a class="btn btn-outline-info mb-4" href="{{ url_for('main.index',page=page_num) }}">{{ page_num }}</a>
+                 {% endif %}
+            {% else %}
+                ...
+            {% endif %}
+        {% endfor %}
+    {% endblock content %}
